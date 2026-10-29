@@ -1,0 +1,110 @@
+== H. Early failed board (H_old_board_I_vs_E.csv) ==
+Values transcribed by hand from the logger display; raw log not preserved.
+points: 7, E from -299.2 to 301.2 mV
+mean current: 12.01 nA, SD (n-1): 0.055 nA
+slope dI/dE: -0.078 +- 0.108 nA/V (least squares, 1 SE)
+3-sigma bound on |dI/dE|: 0.403 nA/V -> resistive leak > 2.48 GOhm
+voltage needed to drive the mean current through it: > 29.8 V
+slope expected if the output saturated (R = 20 MOhm): -1/R = -50 nA/V
+
+== B. Noise run (B_noise_REF3040_2026-10-26.csv) ==
+selection: valid == 1 and t_s <= 3600 s; il in pA, scaled by r/R_TRUE = 47.94/49.61 = 0.9663
+readings: 3599, median interval 1.00 s
+mean: -2.63 pA, SD of single readings: 0.77 pA
+logging resolution: il is written with 3 decimals in nA, i.e. 1 pA steps (before scaling)
+distribution of logged values before scaling (pA: count): -36: 1, -7: 2, -6: 2, -5: 6, -4: 103, -3: 2359, -2: 1103, -1: 20, 0: 2, 5: 1
+share within 1.5 pA of the mean: 99.1 %
+clean set: |I - mean| < 5 pA, 2 readings removed
+Allan deviation, pA (block = number of consecutive ~1 s readings):
+  block   all      clean    n_blocks
+      1    0.684    0.412   3599
+      3    0.425    0.290   1199
+     10    0.261    0.198   359
+     30    0.168    0.130   119
+     60    0.124    0.099   59
+    120    0.111    0.092   29
+    300    0.153    0.148   11
+    600    0.229    0.230   5
+    900    0.274    0.283   3
+ten-minute means, pA: -2.24, -2.76, -2.95, -2.72, -2.47
+  range: -2.95 to -2.24 pA
+SD of 59 one-minute means: 0.28 pA (includes the slow drift)
+
+== A. Known currents (A_10M_run3.csv) ==
+R = 49.61 MOhm, Rt = 9.73 MOhm; logged currents (firmware r = 47.94) scaled by 0.9663
+method: median current with Rt minus median current without Rt (before and after)
+  E      expected nA   measured nA   dev %   Rt/R from Vin/E
+  100.0     -1.6852      -1.6863   +0.06   0.1958
+   30.0     -0.5056      -0.5064   +0.16   0.1958
+    note: the 'after' phase of e30 was logged at E = 10.2 mV
+   10.0     -0.1685      -0.1681   -0.22   0.1985
+Rt/R from the multimeter: 0.1961
+e10 uses vin logged with 0.1 mV resolution on ~1.8 mV, so its ratio is imprecise;
+the e100 ratio gives R independently of the multimeter value of R:
+  R_eff = 49.70 MOhm
+
+== G. PH-4502C (G_ph4502c.csv) ==
+plateaus: E steps > 2 mV, or the button press at t = 898 s, start a new plateau;
+plateaus with < 8 readings dropped; plateaus from t >= 898 s are the shorted sweep
+note: the shorted 0 mV plateau includes a re-check at about +1.9 mV
+  t0 s    E mV    state      error at input mV   SD of il, nA
+     111   -100.8  resistor    +0.05              0.028
+     237   -247.7  resistor    -5.20              0.031
+     277   -432.3  resistor   -11.40              0.031
+     346   -101.3  resistor    -0.20              0.041
+     382      0.0  resistor    -0.40              0.035
+     433    101.2  resistor    +0.60              0.028
+     489    250.1  resistor    +5.20              0.035
+     562    351.3  resistor    +8.40              0.034
+     637    425.2  resistor   +10.80              0.030
+     898    425.2  shorted    +10.90              0.000
+     939    250.9  shorted     +5.00              0.001
+     987    101.4  shorted     +0.00              0.001
+    1015      0.0  shorted     -3.80              0.001
+    1078   -100.9  shorted     -0.10              0.001
+    1117   -249.3  shorted     -5.40              0.008
+    1156   -430.9  shorted    -11.60              0.024
+pairs at the same E (within 3 mV), resistor vs shorted sweep:
+  E  -100.8:  +0.05 vs  -0.10 mV (difference +0.15)
+  E  -247.7:  -5.20 vs  -5.40 mV (difference +0.20)
+  E  -432.3: -11.40 vs -11.60 mV (difference +0.20)
+  E  -101.3:  -0.20 vs  -0.10 mV (difference -0.10)
+  E     0.0:  -0.40 vs  -3.80 mV (difference +3.40)
+  E   101.2:  +0.60 vs  +0.00 mV (difference +0.60)
+  E   250.1:  +5.20 vs  +5.00 mV (difference +0.20)
+  E   425.2: +10.80 vs +10.90 mV (difference -0.10)
+
+== F. Electrode in buffers (F_buffers.csv) ==
+solution temperature: 23.0 degC; window: 300 s before the first '_end' row
+  buffer  pH at T   vin mean mV   SD mV   n
+  4p01     4.000      159.013    0.277   601
+  6p86     6.868       -0.990    0.029   600
+  9p18     9.200     -130.055    0.058   601
+slope: -55.60 mV/pH, ideal at 23.0 degC: 58.76 mV/pH (94.6 %)
+pH at 0 mV: 6.857; largest residual: 0.38 mV
+
+== T. Toggle runs on the REF3040 board (2026-10-28) ==
+window: lo..hi s after each switch; current = [(vin-e)_open - mean (vin-e)_shorted neighbours] / R_TRUE
+T_toggle_REF3040_2026-10-28.csv: E -98.7 mV, window 30-60 s
+  toggle pA: -2.60, -2.85, -3.25, -3.58, -3.43, -3.31, -3.41, -3.04
+  mean -3.18 pA, SEM 0.12 pA; line-based mean -3.27 pA
+  E open minus E shorted (button held by hand): mean -8.1 uV
+T_toggle_+100_REF3040_2026-10-28.csv: E 99.3 mV, window 10-30 s
+  toggle pA: -0.95, -1.07, -1.26, -1.04, -1.37, -1.41, -1.16, -0.89
+  mean -1.14 pA, SEM 0.07 pA; line-based mean -1.12 pA
+  E open minus E shorted (button held by hand): mean -31.0 uV
+
+== N. One-hour runs at E = +100 mV, resistor shorted (B3) and in circuit (B2) ==
+B3_noise_shorted_2026-10-28.csv: 3601 readings, mean +0.261 pA, SD 0.310 pA
+  Allan deviation, pA: 1 s 0.188, 10 s 0.101, 60 s 0.062, 300 s 0.079, 600 s 0.097
+  ten-minute means, pA: +0.05, +0.03, +0.14, +0.41, +0.49, +0.43
+B2_noise_open_2026-10-28.csv: 3601 readings, mean -1.156 pA, SD 0.555 pA
+  Allan deviation, pA: 1 s 0.433, 10 s 0.183, 60 s 0.101, 300 s 0.078, 600 s 0.089
+  ten-minute means, pA: -0.96, -1.17, -1.12, -1.15, -1.18, -1.36
+transition B3 -> B2: E jump beyond the trend -4.2 uV
+  current from (vin-e): -1.31 pA (last 5 min of B3 vs first 5 min of B2)
+
+== U. Uncertainty helpers ==
+R from 5 readings on the 40 MOhm range: +-1.24 MOhm (+-2.5 %)
+E truncation in readA(): up to 1 LSB = 62.5 uV -> 1.26 pA at R = 49.61 MOhm
+

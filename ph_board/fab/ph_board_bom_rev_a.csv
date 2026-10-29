@@ -1,0 +1,17 @@
+Item,References,Qty,Value,Package,Manufacturer,Part number,Notes
+1,"C1,C6,C7,C8,C9,C10",6,1 uF,0805,,,"Ceramic X7R, 10 V or more. As fitted on the working board (100 nF also works). C1: ceramic only"
+2,C5,1,56 nF,0805,,,"Ceramic only. Not 1 uF: the LED loop gets ten times slower"
+3,"C2,C3,C4",3,20 uF,"Radial, 5-6.3 mm, 2.5 mm pitch",,,"Aluminium electrolytic, 10 V or more; 4.7-47 uF works. C3: + goes to GND"
+4,"R1,R4",2,100k,0805,Yageo,RC0805FR-07100KL,1 %
+5,"R6,R7,R9",3,10k,0805,Yageo,RC0805FR-0710KL,1 %
+6,R3,1,200k,0805,Yageo,RC0805FR-07200KL,"1 %. Sets the first-stage gain with R8"
+7,R5,1,56k,0805,Yageo,RC0805FR-0756KL,"1 %. Revision A: sets Vref with R9"
+8,R8,1,39k,0805,Yageo,RC0805FR-0739KL,1 %
+9,R2,1,470,0805,Yageo,RC0805FR-07470RL,"1 %. Limits the HCNR201 LED current"
+10,"U1,U2,U4",3,LMC6042,SOIC-8,Texas Instruments,LMC6042AIM,"Buy from an authorised distributor. U1 pin 5 is bent up and wired in the air to the BNC centre"
+11,U3,1,HCNR201,SMD-8 (gull wing),Broadcom,HCNR201-500E,Analog optocoupler
+12,U7,1,TMA0505D,SIP,Traco Power,TMA 0505D,"Isolated 5 V to +/-5 V, 1 W. Check the pin numbers against the datasheet of the part you buy"
+13,U5,1,BNC socket,PCB mount,,,"Only the shield is soldered; the centre goes straight to U1 pin 5"
+14,P2,1,XH-3A,"JST XH, 3 pins, 2.5 mm",JST,B3B-XH-A,"1 VCC (+5 V), 2 com, 3 S"
+15,"RA1,RA2",2,wire link,3296W trimmer footprint,,,"Revision A: bare wire 0.5-0.6 mm through holes 1 and 3, soldered to hole 2 as well"
+16,TP1-TP9,9,test pad,,, ,"No part. TP1-TP7 to TP1 (GND), TP8-TP9 to TP8 (com)"

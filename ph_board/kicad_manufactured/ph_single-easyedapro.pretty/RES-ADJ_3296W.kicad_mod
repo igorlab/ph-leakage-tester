@@ -1,0 +1,226 @@
+(footprint "RES-ADJ_3296W"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 1.71 2.01 270)
+		(layer "F.SilkS")
+		(uuid "9631fe33-679b-474c-9ab2-57eba5f50041")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "RES-ADJ_3296W"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "9db7fd7d-5280-4bf8-8a48-93b3fc84a250")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "f277d6d8-0e3d-4065-b8a5-fc7b1e629bf7")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "13bf8b02-0f8d-48aa-a3b2-74d0db876fd7")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom dnp)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -2.286 -3.81)
+		(end -2.032 -3.81)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "2a4eaf7e-b269-43cd-b1b8-e19293f87b95")
+	)
+	(fp_line
+		(start -2.286 3.81)
+		(end -1.905 3.302)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "60ca4489-e3b4-486a-92aa-a1dd8bcba976")
+	)
+	(fp_line
+		(start -2.032 -3.81)
+		(end 2.54 -3.81)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "f8ef3389-ec18-4c6e-9c58-a6ebc4662775")
+	)
+	(fp_line
+		(start -1.905 -3.302)
+		(end -2.286 -3.81)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "03d5bc21-edb8-48b5-a9eb-991bbe438337")
+	)
+	(fp_line
+		(start -1.905 3.302)
+		(end -1.905 -3.302)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "7324ec5f-6f94-4114-b90d-631dbdfb8b6b")
+	)
+	(fp_line
+		(start 1.27 -2.794)
+		(end 1.651 -2.794)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "2756617e-8353-41ff-8bf1-755a24ed4790")
+	)
+	(fp_line
+		(start 1.651 -2.794)
+		(end 2.032 -2.794)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "c8429e89-4174-47ba-a619-d8bdc5d454ee")
+	)
+	(fp_line
+		(start 2.032 -2.794)
+		(end 1.651 -2.794)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "10287207-3009-43a2-8832-dec28bb63888")
+	)
+	(fp_line
+		(start 2.54 -3.81)
+		(end 2.54 3.81)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "2cb618a4-7082-45d6-91bb-51164d90cd61")
+	)
+	(fp_line
+		(start 2.54 3.81)
+		(end -2.286 3.81)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "ef7cc772-acbc-4d9e-a231-1cda4c206ec5")
+	)
+	(fp_arc
+		(start 2.1895 -2.784)
+		(mid 1.111477 -2.789)
+		(end 2.1895 -2.794)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "cc437557-a6d8-476f-a168-e5f4e0c6d1a0")
+	)
+	(fp_rect
+		(start -1.012 -3.552)
+		(end 1.012 3.572)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "f4890a13-71c2-48f2-a8d9-f9773c26f1ba")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "8e199dd0-43c2-47df-8016-a28fb909ec56")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+		)
+	)
+	(pad "1" thru_hole circle
+		(at 0 -2.54 270)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 90)
+		(uuid "1aba3d9c-80da-4770-9df5-6d9c707d634d")
+	)
+	(pad "2" thru_hole circle
+		(at 0 0 270)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 90)
+		(uuid "a287faed-5e78-42c7-aa0f-2f73c0df2b2c")
+	)
+	(pad "3" thru_hole circle
+		(at 0 2.56 270)
+		(size 1.524 1.524)
+		(drill 0.762)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 90)
+		(uuid "b1c8e076-8e38-4610-bdd9-e39fb62142c4")
+	)
+	(embedded_fonts no)
+	(model "${KICAD10_3DMODEL_DIR}/Potentiometer_THT.3dshapes/Potentiometer_Bourns_3296W_Vertical.step"
+		(offset
+			(xyz 0 2.54 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 -90)
+		)
+	)
+)

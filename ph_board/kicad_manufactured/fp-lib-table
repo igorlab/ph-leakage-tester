@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "ph_single-easyedapro")(type "KiCad")(uri "${KIPRJMOD}/ph_single-easyedapro.pretty")(options "")(descr "Footprints of this board"))
+)

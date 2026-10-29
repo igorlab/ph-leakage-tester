@@ -1,0 +1,6 @@
+__pycache__
+firmware/src/wifi_secret.h
+hardware/.history/
+.pio/
+*.lck
+~$*

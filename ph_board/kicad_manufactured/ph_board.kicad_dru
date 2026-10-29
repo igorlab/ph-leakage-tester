@@ -1,0 +1,7 @@
+(version 1)
+# Isolation barrier: copper of the output (com) side must keep >= 1.8 mm from any copper
+# of the isolated side. Output-side nets: com, VCC, /PD2, /S, /U4B_OUT (net labels in the schematic).
+# Unconnected pins (HCNR201 7, 8) belong to neither side.
+(rule "isolation_barrier"
+  (constraint clearance (min 1.8mm))
+  (condition "(A.NetName == 'com' || A.NetName == 'VCC' || A.NetName == '/PD2' || A.NetName == '/S' || A.NetName == '/U4B_OUT') && !(B.NetName == 'com' || B.NetName == 'VCC' || B.NetName == '/PD2' || B.NetName == '/S' || B.NetName == '/U4B_OUT') && B.NetName != '' && !(A.NetName == 'unconnected-*') && !(B.NetName == 'unconnected-*')"))
