@@ -152,9 +152,9 @@ def resistor(cx, cy, bands, vertical=False, length=90, thick=22):
             ax.add_patch(Rectangle((cx - length / 2 + 14 + n * 12, cy - thick / 2), 7, thick, fc=c, ec="none", zorder=6))
 
 
-def pad(x, y, r=8, fc="#e8a317", ec="#8a5a00"):
-    ax.add_patch(Circle((x, y), r, fc=fc, ec=ec, lw=1.5, zorder=7))
-    ax.add_patch(Circle((x, y), r * 0.38, fc="#ffffff", ec="none", zorder=8))
+def pad(x, y, r=8, dot=None):
+    ax.add_patch(Circle((x, y), r, fc="#dcb760", ec="#b58f35", lw=1.6, zorder=7))
+    ax.add_patch(Circle((x, y), r * 0.55, fc=dot or "#8a7a55", ec="none", zorder=8))
 
 
 # title
@@ -198,24 +198,28 @@ for dy, w in ((0, 14), (6, 9), (12, 4)):
 
 # ESP32-C3 SuperMini
 text(112, 199, "ESP32-C3 SuperMini", 19, weight="bold", ha="left")
-ax.add_patch(FancyBboxPatch((111, 214), 355, 155, boxstyle="round,pad=0,rounding_size=10", fc="#161b22", ec="none", zorder=4))
-ax.add_patch(Rectangle((123, 255), 28, 72, fc="#e8dcc0", ec="none", zorder=5))
-ax.add_patch(Rectangle((460, 266), 36, 50, fc="#c8ccd2", ec="#9aa0a8", zorder=5))
-ax.add_patch(FancyBboxPatch((470, 280), 16, 22, boxstyle="round,pad=0,rounding_size=4", fc="#2a2f36", ec="none", zorder=6))
-ax.add_patch(Rectangle((233, 262), 82, 59, fc="#2a2f36", ec="#444b55", zorder=5))
-text(274, 284, "ESP32-C3", 12, "#ffffff", "bold")
-text(274, 303, "FH4", 10, "#aab0b8")
-ax.add_patch(Rectangle((344, 268), 21, 15, fc="#e8e8e8", ec="none", zorder=6))
-ax.add_patch(Rectangle((344, 300), 21, 15, fc="#e8e8e8", ec="none", zorder=6))
-text(375, 276, "RST", 9, "#aab0b8", ha="left")
-text(375, 308, "BOOT", 9, "#aab0b8", ha="left")
-ax.add_patch(Circle((413, 291), 5, fc="#e0443a", ec="none", zorder=6))
+ax.add_patch(FancyBboxPatch((111, 214), 355, 155, boxstyle="round,pad=0,rounding_size=12", fc="#1b2027", ec="#0a0d11", lw=2, zorder=4))
+ax.add_patch(FancyBboxPatch((123, 255), 28, 72, boxstyle="round,pad=0,rounding_size=5", fc="#e8e1d2", ec="#c9c0aa", lw=1, zorder=5))
+ax.add_patch(FancyBboxPatch((462, 266), 34, 50, boxstyle="round,pad=0,rounding_size=6", fc="#d3d6db", ec="#8d939b", lw=1.5, zorder=5))
+ax.add_patch(FancyBboxPatch((470, 280), 17, 22, boxstyle="round,pad=0,rounding_size=4", fc="#2a2f36", ec="#6d737c", lw=1, zorder=6))
+ax.add_patch(FancyBboxPatch((233, 262), 82, 59, boxstyle="round,pad=0,rounding_size=4", fc="#2a2f36", ec="#4a515b", lw=1.5, zorder=5))
+text(274, 284, "ESP32-C3", 12.5, "#ffffff", "bold")
+text(274, 303, "FH4", 10.5, "#9aa4b0")
+for yy in (268, 300):
+    ax.add_patch(FancyBboxPatch((345, yy), 21, 16, boxstyle="round,pad=0,rounding_size=4", fc="#d5d9de", ec="#9aa0a8", lw=1, zorder=6))
+text(375, 276, "RST", 9.5, "#9aa4b0", ha="left")
+text(375, 308, "BOOT", 9.5, "#9aa4b0", ha="left")
+ax.add_patch(Circle((405, 291), 5.5, fc="#e0443a", ec="none", zorder=6))
+USED_TOP = {"4": PURPLE, "3.3": RED, "G": BLACK, "5V": ORANGE}
+USED_BOT = {"6": GREEN, "5": BLUE}
 for x, lab in zip([167, 203, 239, 276, 312, 349, 385, 421], ["0", "1", "2", "3", "4", "3.3", "G", "5V"]):
     pad(x, 235)
-    text(x, 252, lab, 11, "#ffffff", "bold")
+    on = lab in USED_TOP
+    text(x, 252, lab, 12 if on else 11, "#ffffff" if on else "#8fa4bc", "bold" if on else "normal")
 for x, lab in zip([167, 203, 240, 276, 312, 349, 385, 421], ["21", "20", "10", "9", "8", "7", "6", "5"]):
     pad(x, 348)
-    text(x, 330, lab, 11, "#ffffff", "bold")
+    on = lab in USED_BOT
+    text(x, 330, lab, 12 if on else 11, "#ffffff" if on else "#8fa4bc", "bold" if on else "normal")
 
 # OLED
 ax.add_patch(Rectangle((553, 200), 226, 153, fc="#1f4e9a", ec="#16386f", lw=2, zorder=4))
@@ -228,15 +232,20 @@ for x, lab in zip([594, 634, 674, 714], ["GND", "VCC", "SCL", "SDA"]):
 text(666, 372, "OLED SSD1306, address 0x3C", 14, weight="bold")
 
 # ADS1115
-ax.add_patch(FancyBboxPatch((1180, 230), 153, 403, boxstyle="round,pad=0,rounding_size=8", fc="#2d55a3", ec="#0e2a63", lw=2, zorder=4))
+ax.add_patch(FancyBboxPatch((1180, 230), 153, 403, boxstyle="round,pad=0,rounding_size=12", fc="#1f5aa6", ec="#133f7a", lw=2, zorder=4))
 for y, lab in zip([259, 293, 326, 360, 394, 428, 462, 495, 529, 563],
                   ["VDD", "GND", "SCL", "SDA", "ADDR", "ALRT", "A0", "A1", "A2", "A3"]):
-    pad(1200, y)
-    text(1216, y, lab, 14, "#ffffff", "bold", ha="left")
-for y in (259, 293, 326, 360, 563):
-    ax.add_patch(Rectangle((1277, y - 6), 22, 11, fc="#1a1a1a", ec="none", zorder=5))
-ax.add_patch(Rectangle((1265, 472), 38, 46, fc="#14181e", ec="none", zorder=5))
-text(1323, 425, "ADS1115", 30, "#14243f", "bold", rotation=270)
+    pad(1200, y, 9)
+    text(1216, y, lab, 14.5, "#ffffff", "bold", ha="left")
+for y in (259, 293, 326, 360, 563):               # SMD parts: black body, silver ends
+    ax.add_patch(Rectangle((1280, y - 7), 18, 14, fc="#2a2a2a", ec="none", zorder=5))
+    ax.add_patch(Rectangle((1276, y - 7), 5, 14, fc="#d8d8d8", ec="none", zorder=5))
+    ax.add_patch(Rectangle((1297, y - 7), 5, 14, fc="#d8d8d8", ec="none", zorder=5))
+ax.add_patch(FancyBboxPatch((1267, 472), 36, 46, boxstyle="round,pad=0,rounding_size=3", fc="#14181e", ec="none", zorder=5))
+for k in range(5):
+    ax.plot([1260, 1267], [477 + k * 9] * 2, color="#cfd3d8", lw=2, zorder=5)
+    ax.plot([1303, 1310], [477 + k * 9] * 2, color="#cfd3d8", lw=2, zorder=5)
+text(1323, 425, "ADS1115", 30, "#ffffff", "bold", rotation=270)
 text(1341, 394, "ADDR to GND", 14, weight="bold", ha="left")
 
 # push button, trimmer, BNC, battery, switch
@@ -325,10 +334,15 @@ for n, (c, s) in enumerate(LEG2):
 # wires and junction dots on top of everything else
 for i in range(len(wires)):
     draw_wire(i)
-TERMINALS = [((352, 745), BROWN), ((401, 745), PURPLE), ((352, 797), BROWN), ((401, 797), BROWN),
+TERMINALS = [((312, 235), PURPLE), ((349, 235), RED), ((385, 235), BLACK), ((421, 235), ORANGE),
+             ((384, 348), GREEN), ((421, 348), BLUE),
+             ((594, 215), BLACK), ((634, 215), RED), ((674, 215), GREEN), ((714, 215), BLUE),
+             ((1200, 259), RED), ((1200, 293), BLACK), ((1200, 326), GREEN), ((1200, 359), BLUE),
+             ((1200, 462), YELLOW), ((1200, 495), PURPLE), ((1200, 529), PINK), ((1200, 563), GREY),
+             ((352, 745), BROWN), ((401, 745), PURPLE), ((352, 797), BROWN), ((401, 797), BROWN),
              ((634, 792), BROWN), ((661, 792), YELLOW), ((690, 792), PURPLE)]
 for (x, y), c in TERMINALS:
-    ax.add_patch(Circle((x, y), 6.5, fc=c, ec="none", zorder=11))
+    ax.add_patch(Circle((x, y), 5, fc=c, ec="none", zorder=11))
 for (x, y), c in JUNCTIONS:
     ax.add_patch(Circle((x, y), 6.5, fc=c, ec="none", zorder=10))
 
