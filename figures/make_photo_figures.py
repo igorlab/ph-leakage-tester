@@ -1,4 +1,4 @@
-"""Photo figures of the JOH metapaper: crop, rotate and number the parts.
+"""Photo figures of the paper: crop, rotate and number the parts.
 
     python3 make_photo_figures.py
 
@@ -35,7 +35,7 @@ FIGURES = {
     "photo_r50m": ("calibrator_50M.jpg", (300, 100, 1110, 960), 0, []),   # the caption says it all
 }
 
-# Final photographs used by the metapaper.  The previews have an identical canvas so
+# Final photographs used by the paper.  The previews have an identical canvas so
 # Markdown renderers display portrait and landscape photographs at a consistent size.
 # Each preview remains a link to the corresponding full-resolution photograph.
 PREVIEWS = {

@@ -2,8 +2,8 @@
 """Wiring diagram of the pH calibrator (tester): figures/fig_calibrator_schematic.png
 
 Everything is drawn from the coordinate lists below (units: pixels of a 2000 x 1209 canvas,
-y downwards). A dot is drawn only where a wire is connected to another wire (T junction);
-plain corners get no dot. Where wires only cross, one of them hops over the other.
+y downwards). A dot is drawn where a wire is connected to another wire (T junction) or lands on a
+component terminal; plain corners get no dot. Where wires only cross, one of them hops over the other.
 
 Usage (from the repository root):  python3 figures/fig_calibrator_schematic.py
 Requires: matplotlib, numpy.
@@ -52,8 +52,9 @@ wire(BLACK, (128, 94), (87, 94), (87, 158), (1952, 158), (1952, 773), (1862, 773
 wire(BLACK, (385, 235), (385, 158))
 wire(BLACK, (594, 215), (594, 158))
 wire(BLACK, (1132, 158), (1132, 293), (1200, 293))
+wire(PURPLE, (217, 94), (249, 94))                                                         # R6-R7 node
 wire(PURPLE, (232, 94), (232, 175), (312, 175), (312, 235))                                # GPIO4
-wire(ORANGE, (338, 94), (1976, 94), (1976, 740), (1558, 740), (1558, 809))                 # 5 V
+wire(ORANGE, (338, 94), (1928, 94), (1928, 740), (1558, 740), (1558, 809))                 # 5 V
 wire(ORANGE, (421, 235), (421, 94))
 wire(RED, (349, 235), (349, 127), (1156, 127), (1156, 259), (1200, 259))                   # 3.3 V
 wire(RED, (634, 215), (634, 127))
@@ -133,7 +134,7 @@ def draw_wire(i):
                 xs += [hx + HOP * np.sin(k) for k in t]
                 ys += [hy - d * HOP + d * HOP * (1 - np.cos(k)) for k in t]
         xs.append(b[0]); ys.append(b[1])
-    ax.plot(xs, ys, color=color, lw=LW, solid_capstyle="butt", solid_joinstyle="miter", zorder=3)
+    ax.plot(xs, ys, color=color, lw=LW, solid_capstyle="butt", solid_joinstyle="miter", zorder=9)
 
 
 # ---------------------------------------------------------------- components
@@ -265,13 +266,15 @@ ax.add_patch(FancyBboxPatch((111, 753), 121, 89, boxstyle="round,pad=0,rounding_
 ax.add_patch(Circle((172, 798), 31, fc="#d9d9d9", ec="#999", lw=2, zorder=6))
 text(172, 784, "+", 20, "#333", "bold", zorder=8)
 text(172, 809, "LR44", 11, "#333", "bold", zorder=8)
-ax.add_patch(Rectangle((312, 713), 129, 169, fc="#1c1c1c", ec="none", zorder=4))
-ax.add_patch(Polygon([[366, 700], [388, 700], [391, 678], [363, 678]], fc="#c8c8c8", ec="#8a8a8a", zorder=6))
-ax.plot([376, 376], [700, 740], color="#9a9a9a", lw=5, zorder=5)
+ax.add_patch(FancyBboxPatch((312, 713), 129, 169, boxstyle="round,pad=0,rounding_size=12", fc="#2b2b2b", ec="#000000", lw=2, zorder=4))
+# lever: a grey cone, light on the left
+lever = Polygon([[359, 713], [393, 713], [388, 676], [364, 676]], fc="#bdbdbd", ec="#7a7a7a", lw=1.5, zorder=5)
+ax.add_patch(lever)
+ax.add_patch(Polygon([[359, 713], [375, 713], [375, 678], [364, 678]], fc="#e6e6e6", ec="none", zorder=5))
 for (x, y) in ((352, 745), (401, 745), (352, 797), (401, 797), (352, 849), (401, 849)):
-    ax.add_patch(Rectangle((x - 8, y - 8), 16, 16, fc="#c8c8c8", ec="#888", zorder=6))
-ax.plot([352, 401], [745, 849], color=ORANGE, lw=2.2, zorder=7)
-ax.plot([401, 352], [745, 849], color=ORANGE, lw=2.2, zorder=7)
+    ax.add_patch(FancyBboxPatch((x - 11, y - 8), 22, 16, boxstyle="round,pad=0,rounding_size=4", fc="#d0d0d0", ec="#9a9a9a", lw=1, zorder=6))
+ax.plot([352, 401], [745, 849], color="#e08a2b", lw=2.6, zorder=7)
+ax.plot([401, 352], [745, 849], color="#e08a2b", lw=2.6, zorder=7)
 text(291, 745, "1", 14, weight="bold")
 text(291, 849, "2", 14, weight="bold")
 text(377, 901, "polarity switch", 14, weight="bold")
@@ -322,6 +325,10 @@ for n, (c, s) in enumerate(LEG2):
 # wires and junction dots on top of everything else
 for i in range(len(wires)):
     draw_wire(i)
+TERMINALS = [((352, 745), BROWN), ((401, 745), PURPLE), ((352, 797), BROWN), ((401, 797), BROWN),
+             ((634, 792), BROWN), ((661, 792), YELLOW), ((690, 792), PURPLE)]
+for (x, y), c in TERMINALS:
+    ax.add_patch(Circle((x, y), 6.5, fc=c, ec="none", zorder=11))
 for (x, y), c in JUNCTIONS:
     ax.add_patch(Circle((x, y), 6.5, fc=c, ec="none", zorder=10))
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recompute the numbers used in the metapaper from the raw CSV logs.
+"""Recompute the numbers used in the paper from the raw CSV logs.
 
 Usage (from the repository root):
     python3 analysis/paper_numbers.py            # data in ./data

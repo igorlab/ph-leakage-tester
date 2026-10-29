@@ -1,4 +1,4 @@
-"""Figures of the JOH metapaper, made from the raw CSV in ../data.
+"""Figures of the paper, made from the raw CSV in ../data.
 
     python3 make_paper_figures.py            # all figures
     python3 make_paper_figures.py known      # one of them

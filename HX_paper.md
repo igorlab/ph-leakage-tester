@@ -1,6 +1,6 @@
 # pH electrode simulator and leakage tester for in-circuit measurement of amplifier input current
 
-<!-- HardwareX version: main working file from 2026-10-28; edit this file directly (no longer rebuilt from JOH_metapaper_3.md). Template: HardwareX article template v2 (June 2021); check the current template linked from the Guide for authors. -->
+<!-- HardwareX version. Template: HardwareX article template v2 (June 2021); check the current template linked from the Guide for authors. -->
 
 **Authors:** Ihor Tkachenko*
 
