@@ -1,64 +1,26 @@
-# Фото для статті
+# Photographs
 
-Усі фото приладів і плат — сюди. Перед комітом з них знімаються EXIF (GPS, модель телефона,
-дата): Claude перезберігає кожне фото без метаданих.
+Photographs of the tester, the amplifier boards and the test set-ups. All files are stored
+without EXIF metadata (no GPS, camera model or date).
 
-Як додати: надіслати фото в чат або покласти файл у цю теку й сказати назву.
+The photo figures of the paper (cropped, rotated and numbered) are made from these files by
+`../figures/make_photo_figures.py`; the numbered parts are explained in the figure captions of
+`../HX_paper.md`.
 
-## Що потрібно і куди піде
-
-| Файл | Що на фото | Де в статті | Стан |
-|---|---|---|---|
-| `board_top.jpg` | Окремий повний кадр зверху | Рис. 3 (за бажанням) | не потрібен: верх A вже задокументовано у `board_input.jpg` і `boards_three.jpg` (Рис. 4b, 6c) |
-| `board_bottom.jpg` | Плата знизу | Рис. 3 | чекає |
-| `board_a_bottom.png` | Плата A/дільник знизу перед переробкою | Архів revision A / Рис. 4 | **є** (2026-10-25, повний вид, PNG без дати створення) |
-| `board_input.jpg` | Крупно: верх A, вивід 5 U1 у повітрі до центру BNC; скоби RA1/RA2 | Збирання (Build Details) | **є**, Рис. 4b |
-| `board_ref3040.png` | Revision B крупно: REF3040 на п'ятаках R5, 47 кОм і перемичка RA2 | Рис. 4c / опис revision B | **є** (2026-10-25, PNG із буфера обміну, без EXIF/GPS) |
-| `calibrator_outside.jpg` | Калібратор зовні з платою в тримачі | Рис. 6a | є, **TODO перезняти**: позаду роздруківка розводки зі старими номіналами й українськими нотатками; на екрані A −150 мВ і S 0.066 В — покази мають відповідати реальному стану |
-| `calibrator_inside_old.jpg` | Калібратор усередині | Рис. 6c | є, **TODO перезняти**: стара внутрішня плата, темно, під кутом; оператор надішле свіжу |
-| `calibrator_50M.jpg` | Крупно: ланцюжок 50 МОм (п'ять SMD «106» = 10 МОм торець до торця, у повітрі над платою) | Збирання | **є** (2026-10-24, знизу калібратора); на рисунку — обрізати до ланцюжка й двох його кінців |
-| `setup.jpg` | Калібратор і дві плати (одна в тримачі, друга на кабелі BNC) | Рис. 6b | є, **TODO перезняти**: прибрати щупи, олівець, кусачки |
-| `setup_electrode.jpg` | Стенд: калібратор + плата + електрод у склянці | Застосування / вимір F | чекає |
-| `station.jpg` | Плата в станції KH | Застосування | чекає |
-| `../article/img/i-02.jpg` | Старий імітатор И-02 (1988) | Рис. 2 | є |
-| `ph4502c_*.jpg` | Модуль PH-4502C з обох боків, маркування мікросхем | Рис. 8 або додаток | є (2026-10-23) |
-
-## Отримано 2026-10-24 (без EXIF, ще не оброблені)
-
-| Файл | Що на фото |
+| File | Content |
 |---|---|
-| `calibrator_inside.jpg` | Калібратор без екрана: ESP32-C3 Super Mini, ADS1115, 50 МОм на основі, кнопка, перемикач, JP1, підстроювальний 10 кОм, J2, кабель BNC. Замінить `calibrator_inside_old.jpg` |
-| `board_input.jpg` | Плата 1 крупно: вивід 5 U1 дротом на центр BNC, скоби RA1/RA2, R3 = 200 кОм |
-| `boards_three.jpg` | Калібратор з платою 1, плата 2, PH-4502C. Замінить `setup.jpg` |
-| `calibrator_vs_ph150.jpg` | Канал A калібратора −155.0 мВ і рН-150МИ −155 мВ на тому самому імітаторі, 25 °C |
-| `setup_electrode.jpg`, `setup_electrode_2.jpg` | Стенд F: електрод у 6.86, плата 1 на калібраторі, склянки 4.00/9.18. Позаду годинник і монітор — обрізати |
-| `bench_webpage.jpg` | Увесь стіл зі сторінкою калібратора на моніторі (для статті-саморобки; у JOH — справжній знімок екрана) |
-| `electrode_danoplus.jpg` | Коробка електрода DANOPLUS (pH 0–14, 0–60 °C) — модель електрода для F |
-| `buffer_sachet.jpg` | Пакетик буфера: 250 мл, ±0.01 pH, таблиця pH від температури |
-
-## План рисунків — зроблено 2026-10-24
-
-`../figures/make_photo_figures.py` робить `figures/photo_*.jpg` (Рис. 4b–c і 6a–e метастатті);
-координати номерів — у ньому. Назви деталей під номерами 3, 7, 9 на Рис. 6a (LR44, кнопка,
-тестові штирі) оператор підтвердив 2026-10-24.
-
-### Початковий план
-
-Обробка — скриптом з `figures/`: обрізати, вирівняти, підписати номерами в кружечках
-(білий кружок з темною обвідкою, видно на будь-якому тлі), розшифровка номерів — у підписі
-рисунка англійською. Ширина 2000 px, без EXIF. Мітки однакові на всіх фото: ① ② ③…
-
-1. **Калібратор** (`calibrator_inside.jpg`, обрізати до приладу; кабель BNC прибрати з кадру
-   або лишити як «вихід»): ① ESP32-C3, ② ADS1115, ③ 50 МОм, ④ кнопка (закорочує R),
-   ⑤ JP1 5/3.3 В, ⑥ J2 до плати, ⑦ підстроювальний резистор E, ⑧ перемикач.
-2. **Вхід плати** (`board_input.jpg`, обрізати до U1, BNC і RA1/RA2): ① вивід 5 U1 у повітрі,
-   ② дріт до центру BNC, ③ скоби замість RA1/RA2. Головне фото для Build Details.
-3. **Три плати** (`boards_three.jpg`, обрізати верх із USB-кабелем): ① плата 1 на калібраторі,
-   ② плата 2, ③ PH-4502C — однаковий масштаб, видно різницю розмірів.
-4. **Перевірка каналу A** (`calibrator_vs_ph150.jpg`): обрізати до двох екранів, або два
-   фрагменти поруч — «−155.0 мВ» і «−155 мВ». Ілюструє протокол C/F.
-5. **Стенд F** (`setup_electrode.jpg`, повернути, обрізати годинник і монітор).
-6. Для статті-саморобки ще: `bench_webpage.jpg`, `electrode_danoplus.jpg`, `buffer_sachet.jpg`.
-
-Поради: денне розсіяне світло, без спалаху, камера прямо над об'єктом, тло — килимок з сіткою
-(видно масштаб).
+| `calibrator_outside.jpg` | The tester from outside, with the amplifier board in its holder |
+| `calibrator_inside.jpg` | The tester without the display: ESP32-C3 SuperMini, ADS1115, 50 MΩ chain, push button, polarity switch, JP1, 10 kΩ trimmer, J2 and the BNC cable |
+| `calibrator_inside_old.jpg` | Earlier internal layout (superseded by `calibrator_inside.jpg`) |
+| `calibrator_50M.jpg` | The 50 MΩ series resistor: five 10 MΩ SMD resistors end to end, standing clear of the board |
+| `calibrator_vs_ph150.jpg` | Channel A of the tester (−155.0 mV) next to a pH-150MI meter (−155 mV) on the same simulator, 25 °C |
+| `board_input.jpg` | Amplifier board, input stage: pin 5 of U1 bent up and wired in the air to the BNC centre, solder links in place of the RA1/RA2 trimmers |
+| `board_a_bottom.png` | Amplifier board A, underside, before the REF3040 rework |
+| `board_a_ref3040_rework.png` | Board A after the rework: REF3040 on the R5 pads, 47 kΩ and the RA2 link |
+| `board_ref3040.png` | REF3040 rework, close-up |
+| `boards_three.jpg` | The tester with the amplifier board, a second amplifier board and a PH-4502C module |
+| `setup.jpg`, `bench_webpage.jpg` | Bench set-up with the tester and its web page |
+| `setup_electrode.jpg`, `setup_electrode_2.jpg` | Buffer test (protocol F): electrode in the 6.86 buffer, board on the tester, 4.00 and 9.18 buffers |
+| `electrode_danoplus.jpg` | Box of the DANOPLUS electrode (pH 0–14, 0–60 °C) used as the reference electrode |
+| `buffer_sachet.jpg` | Buffer sachet: 250 ml, ±0.01 pH, pH-versus-temperature table |
+| `ph4502c_*.jpg` | PH-4502C module, both sides, chip markings |
