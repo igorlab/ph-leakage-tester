@@ -6,7 +6,7 @@ series resistor R replaces the electrode, and the amplifier output gives the inp
 from the drop across R. Verified with currents of 0.17 to 1.7 nA.
 
 Description, build instructions, validation and limitations: see the paper
-([`HX_paper.md`](HX_paper.md)).
+([`paper/HX_paper.md`](paper/HX_paper.md)).
 
 ## At a glance
 

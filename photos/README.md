@@ -5,7 +5,7 @@ without EXIF metadata (no GPS, camera model or date).
 
 The photo figures of the paper (cropped, rotated and numbered) are made from these files by
 `../figures/make_photo_figures.py`; the numbered parts are explained in the figure captions of
-`../HX_paper.md`.
+`../paper/HX_paper.md`.
 
 | File | Content |
 |---|---|

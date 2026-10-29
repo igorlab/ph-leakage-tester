@@ -53,7 +53,7 @@ is 0.5 mV, below 0.01 pH; at 10 nA it is 5 V, and the electrode is effectively d
 carbonate alkalinity that follows the sample down to an end point near pH 4 [4], this
 current becomes an error of the result.
 
-![Figure 1](figures/fig_leak_error.png)
+![Figure 1](../figures/fig_leak_error.png)
 
 *Figure 1. Reading error in pH units against the input current of the amplifier, for an
 electrode of 100 MΩ (dashed) and 1 GΩ (solid). Blue band: the failed amplifier,
@@ -75,8 +75,8 @@ input is recognised by comparing readings with and without this resistance, manu
 without a number for the current. To the best of our knowledge, no open, low-cost
 instrument measures the input current of a pH amplifier in place.
 
-[![Figure 2a](figures/preview_i-02_lab.jpg)](article/img/i-02.jpg)
-[![Figure 2b](figures/preview_calibrator_photo_lab.jpg)](figures/photo_calibrator.jpg)
+[![Figure 2a](../figures/preview_i-02_lab.jpg)](../photos/i-02.jpg)
+[![Figure 2b](../figures/preview_calibrator_photo_lab.jpg)](../figures/photo_calibrator.jpg)
 
 *Figure 2. (a) The I-02 electrode simulator (1988): a mercury standard cell, decades of
 resistors and switchable series resistances of 500 and 1000 MΩ. (b) The tester described
@@ -110,7 +110,7 @@ pickup.
 The tester measures the input current of an amplifier through the amplifier's own
 output (Figure 3). Its hardware and firmware are described below.
 
-![Figure 3](figures/fig_principle.png)
+![Figure 3](../figures/fig_principle.png)
 
 *Figure 3. Measurement principle. The simulator voltage E is measured before the series
 resistor R and reaches the amplifier input through it. With the button pressed (R shorted)
@@ -127,16 +127,16 @@ simulator floats: its low side takes its potential from the amplifier under test
 real electrode does, so the simulator voltage channel is valid only with an amplifier
 connected.
 
-![Figure 4](figures/fig_calibrator_schematic.png)
+![Figure 4](../figures/fig_calibrator_schematic.png)
 
 *Figure 4. Schematic of the tester, including USB-supply measurement on GPIO4
 (KiCad source in `hardware/`).*
 
-[![Figure 5a](figures/preview_calibrator_inside_lab.jpg)](figures/photo_calibrator_inside.jpg)
-[![Figure 5b](figures/preview_soldering_lab.jpg)](figures/soldering.jpg)\
-[![Figure 5c](figures/preview_r50m_lab.jpg)](figures/photo_r50m.jpg)
-[![Figure 5d](figures/preview_boards_lab.jpg)](figures/photo_boards.jpg)
-[![Figure 5e](figures/preview_setup_f_lab.jpg)](figures/photo_setup_f.jpg)
+[![Figure 5a](../figures/preview_calibrator_inside_lab.jpg)](../figures/photo_calibrator_inside.jpg)
+[![Figure 5b](../figures/preview_soldering_lab.jpg)](../figures/soldering.jpg)\
+[![Figure 5c](../figures/preview_r50m_lab.jpg)](../figures/photo_r50m.jpg)
+[![Figure 5d](../figures/preview_boards_lab.jpg)](../figures/photo_boards.jpg)
+[![Figure 5e](../figures/preview_setup_f_lab.jpg)](../figures/photo_setup_f.jpg)
 
 *Figure 5. The tester. (a) Inside: (1) ESP32-C3 Super Mini, (2) ADS1115, (3) LR44
 cell, (4) J2 to the amplifier, (5) JP1, supply jumper for the amplifier, set to 5 V, (6) polarity switch, (7) button
@@ -320,7 +320,7 @@ would damage the ESP32-C3.
 The second block of the page converts the amplifier output to pH with a three-buffer
 electrode calibration; it is not needed to measure the current.
 
-![Figure 6](figures/fig_webpage.png)
+![Figure 6](../figures/fig_webpage.png)
 
 *Figure 6. Web page of the tester, block 1 (board leakage): current readings, the
 two-point transfer line, the series resistance and the leakage limit, the leakage current
@@ -365,8 +365,8 @@ earlier prototype took its reference from the +5 V rail; it appears only in the
 supply-sensitivity comparison. Component values and the rework are documented
 in the repository. The amplifier serves here only as a device under test.
 
-[![Figure 7a](figures/preview_board_input_lab.jpg)](figures/photo_board_input.jpg)
-[![Figure 7b](figures/preview_board_bottom_lab.jpg)](photos/board_a_bottom.png)
+[![Figure 7a](../figures/preview_board_input_lab.jpg)](../figures/photo_board_input.jpg)
+[![Figure 7b](../figures/preview_board_bottom_lab.jpg)](../photos/board_a_bottom.png)
 
 *Figure 7. The amplifier board reworked for the REF3040 reference. (a) Component side:
 (1) input pin 5 of the LMC6042, lifted from the board; (2) flying wire from this pin to
@@ -400,7 +400,7 @@ using only the baseline at 30 mV changes that deviation from +0.2 % to +0.4 %.
 | 30.0 mV | −0.506 nA | −0.506 nA | +0.16 % |
 | 10.0 mV | −0.169 nA | −0.168 nA | −0.24 % |
 
-![Figure 8](figures/fig_known_currents.png)
+![Figure 8](../figures/fig_known_currents.png)
 
 *Figure 8. Known currents. (a) Current reading while a 9.73 MΩ resistor is connected
 (shaded) and removed at E = 100, 30 and 10 mV; dashed: −E/(R + Rt). (b) Measured against
@@ -424,7 +424,7 @@ supply-current shunt, eight stable points from −201.0 to +219.9 mV gave a gain
 66 µV (0.001 pH) referred to the input (`data/A_REF3040_linearity_2026-10-26_run2.csv`, Figure 9). At +250.1 mV the
 output reached the lower rail and was excluded from the fit.
 
-![Figure 9](figures/fig_linearity.png)
+![Figure 9](../figures/fig_linearity.png)
 
 *Figure 9. Linearity of the isolated amplifier with the series resistor shorted.
 (a) Output S against input E with the fitted line; open circle: beyond the linear range.
@@ -442,7 +442,7 @@ current at +100 mV is therefore given as −1.3 pA, and the hand-held toggle run
 the tester's own input node, thus depends on E and lies between −1 and −3.5 pA over
 ±100 mV.
 
-![Figure 10](figures/fig_toggle.png)
+![Figure 10](../figures/fig_toggle.png)
 
 *Figure 10. Toggle runs on the isolated amplifier. (a) (Vin − E)/R during the run at
 E = −99 mV; grey: resistor shorted by the button; bars: phase means used; spikes while the
@@ -457,7 +457,7 @@ earlier divider prototype changed by 323 ± 6 mV per volt (0.87 pH/V) over its m
 USB range (`data/E_supply2.csv`). No other performance result from the divider revision
 is used in this paper.
 
-![Figure 11](figures/fig_supply_sensitivity.png){width=60%}
+![Figure 11](../figures/fig_supply_sensitivity.png){width=60%}
 
 *Figure 11. Supply sensitivity of the isolated amplifier with the REF3040 reference and, for historical
 comparison only, the earlier divider prototype. Output S is corrected point by point for
@@ -493,7 +493,7 @@ pickup at the high-impedance node; whether it enters at the module input or thro
 tester's own node was not separated. The tester thus separates nonlinearity, input current and
 interference, which a single reading combines.
 
-![Figure 12](figures/fig_ph4502c.png)
+![Figure 12](../figures/fig_ph4502c.png)
 
 *Figure 12. A PH-4502C module and the isolated amplifier. (a) Error referred to the
 input after a two-point calibration at ±100 mV, resistor shorted. (b) Input current of the
