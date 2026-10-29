@@ -423,45 +423,87 @@ static float phFromA(float va) {
   return PH_ISO - (va * 1000.0f) / PH_SLOPE;
 }
 
-static void drawScreen(float va, float vs) {
+// ---- Main screen (128x64, one colour) ----
+//   status line:   mode            R, board current, USB voltage
+//   big number:    leak current   (pA below 1 nA, nA above) with OK/HIGH and S on the right
+//   two lines:     E and Vin in mV
+static const float NO_BOARD_mA   = 1.0f;    // a connected board draws 10 mA or more
+float g_leakLimit_pA = 10.0f;               // |leak| above this is shown as HIGH
+
+static void rightText(int xRight, int y, const char* s) {
+  oled.drawStr(xRight - oled.getStrWidth(s), y, s);
+}
+
+static void drawScreen(float eMilliV, float vs, float vinMilliV, float leakNA) {
   if (!oledOk) return;
-  char lph[24], nA[16], nS[16];
-  snprintf(lph, sizeof(lph), "pH %.2f  %dmA", phFromA(va), (int)lroundf(g_I_mA));
-  snprintf(nA,  sizeof(nA),  "%.1f", (va * 1000.0f));   // число зі знаком, велике
-  snprintf(nS,  sizeof(nS),  "%.3f", vs);
+  const bool noBoard = g_I_mA < NO_BOARD_mA;
+  const bool haveLine = calValid && !noBoard;
 
+  char buf[24];
   oled.clearBuffer();
-  int x;
 
-  // pH — великим, по центру (baseline трохи нижче, щоб не різало верх)
-  oled.setFont(u8g2_font_helvB14_tr);
-  x = (128 - oled.getStrWidth(lph)) / 2;
-  oled.drawStr(x, 19, lph);
+  // status line
+  oled.setFont(u8g2_font_6x10_tr);
+  oled.drawStr(0, 9, noBoard ? "NO BOARD" : (calValid ? "LEAK" : "NOT CAL"));
+  snprintf(buf, sizeof(buf), "R%.1fM %dmA %.1fV", Rseries / 1.0e6f, (int)lroundf(g_I_mA), g_usb_V);
+  rightText(127, 9, buf);
+  oled.drawHLine(0, 11, 128);
 
-  // A: дрібна літера + великі цифри + дрібна одиниця "mV"
-  oled.setFont(u8g2_font_helvB12_tr);
-  oled.drawStr(0, 42, "A: ");
-  x = oled.getStrWidth("A: ") + 4;
-  oled.setFont(u8g2_font_helvB14_tr);
-  oled.drawStr(x, 42, nA);
-  x += oled.getStrWidth(nA) + 4;
-  oled.setFont(u8g2_font_helvB12_tr);
-  oled.drawStr(x, 42, "mV");
+  if (noBoard) {
+    oled.drawStr((128 - oled.getStrWidth("connect pH board")) / 2, 27, "connect pH board");
+    oled.drawStr((128 - oled.getStrWidth("to J2: S, +5V, GND")) / 2, 38, "to J2: S, +5V, GND");
+  } else {
+    // leak current: pA while below 1 nA, nA above
+    const float pA = leakNA * 1000.0f;
+    const char* unit = "pA";
+    if (!haveLine) {
+      snprintf(buf, sizeof(buf), "---");
+    } else if (fabsf(pA) < 1000.0f) {
+      snprintf(buf, sizeof(buf), "%.1f", pA);
+    } else {
+      unit = "nA";
+      snprintf(buf, sizeof(buf), fabsf(leakNA) < 10.0f ? "%.3f" : (fabsf(leakNA) < 100.0f ? "%.2f" : "%.1f"), leakNA);
+    }
+    oled.setFont(u8g2_font_helvB18_tr);
+    int w = oled.getStrWidth(buf);
+    if (w > 62) { oled.setFont(u8g2_font_helvB14_tr); w = oled.getStrWidth(buf); }
+    oled.drawStr(0, 31, buf);
+    oled.setFont(u8g2_font_helvB12_tr);
+    if (haveLine) oled.drawStr(w + 3, 31, unit);
 
-  // S: дрібна літера + великі цифри + дрібна одиниця "V"
-  oled.setFont(u8g2_font_helvB12_tr);
-  oled.drawStr(0, 63, "S: ");
-  x = oled.getStrWidth("S: ") + 4;
-  oled.setFont(u8g2_font_helvB14_tr);
-  oled.drawStr(x, 63, nS);
-  x += oled.getStrWidth(nS) + 4;
-  oled.setFont(u8g2_font_helvB12_tr);
-  oled.drawStr(x, 63, "V");
+    // limit mark and S on the right
+    if (haveLine) {
+      const bool high = fabsf(pA) > g_leakLimit_pA;
+      oled.setFont(u8g2_font_helvB08_tr);
+      if (high) {
+        oled.drawBox(92, 13, 36, 9);
+        oled.setDrawColor(0);
+        oled.drawStr(92 + (36 - oled.getStrWidth("HIGH")) / 2, 21, "HIGH");
+        oled.setDrawColor(1);
+      } else {
+        rightText(127, 21, "OK");
+      }
+    }
+    oled.setFont(u8g2_font_6x10_tr);
+    snprintf(buf, sizeof(buf), "S%.2fV", vs);
+    rightText(127, 31, buf);
+  }
+
+  // E and Vin
+  oled.setFont(u8g2_font_8x13B_tr);
+  oled.drawStr(0, noBoard ? 62 : 46, "E");
+  snprintf(buf, sizeof(buf), "%+.1f mV", eMilliV);
+  rightText(127, noBoard ? 62 : 46, buf);
+  if (!noBoard) {
+    oled.drawStr(0, 62, "Vin");
+    if (haveLine) snprintf(buf, sizeof(buf), "%+.1f mV", vinMilliV);
+    else          snprintf(buf, sizeof(buf), "---");
+    rightText(127, 62, buf);
+  }
 
   oled.sendBuffer();
 }
 
-// Екран стану мережі: 3 рядки по центру (латиниця — _tr не має кирилиці).
 static void drawStatus(const char* l1, const char* l2, const char* l3) {
   if (!oledOk) return;
   oled.clearBuffer();
@@ -1557,7 +1599,6 @@ void loop() {
   float vs = vsRaw, shuntDrop = 0.0f;   // vs далі = вихід плати без падіння на шунті
   g_shuntValid = correctSForShunt(vsRaw, g_I_mA, vs, shuntDrop);
 
-  if (!netScreen) drawScreen(va, vs);   // покази лише коли не показуємо стан мережі (власний вихід плати)
 
   // Оновити спільні значення для веб-інтерфейсу (читає таск AsyncTCP)
   float e_mV = va * 1000.0f;
@@ -1575,6 +1616,8 @@ void loop() {
   } else {
     g_Vin_mV = 0.0f; g_Ileak_nA = 0.0f; g_pH_real = 7.0f;
   }
+
+  if (!netScreen) drawScreen(e_mV, vs, g_Vin_mV, g_Ileak_nA);   // not while the network state is shown
 
   // Виконати відкладені запити з веб-сторінки (I2C/NVS лише тут)
   processWebRequests(va, vs);
