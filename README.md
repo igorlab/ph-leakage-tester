@@ -8,6 +8,24 @@ from the drop across R. Verified with currents of 0.17 to 1.7 nA.
 Description, build instructions, validation and limitations: see the paper
 ([`HX_paper.md`](HX_paper.md)).
 
+## At a glance
+
+![The tester](figures/photo_calibrator.jpg)
+
+*The tester on a 1 cm grid, with its BNC cable.*
+
+![Measurement principle](figures/fig_principle.png)
+
+*Principle: the simulator voltage E is measured before the series resistor R. With R shorted the input equals E and two points give the amplifier's transfer line; with R in circuit the input is recovered from the output and the current is (Vin − E)/R.*
+
+![Known currents](figures/fig_known_currents.png)
+
+*Check against known currents: a 9.73 MΩ resistor connected and removed at E = 100, 30 and 10 mV; measured currents agree with the calculated ones within 0.3 %.*
+
+![Toggle method](figures/fig_toggle.png)
+
+*Input current of the isolated amplifier by the toggle method: the button is pressed and released in phases of 30–60 s, and slow drift cancels.*
+
 ## Contents
 
 | Folder | What is in it |
