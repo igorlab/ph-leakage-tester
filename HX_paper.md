@@ -179,7 +179,7 @@ the phases (`tools/calibrator_log.py -g toggle`).
 **Software.** The ESP32 serves a web page (English and Ukrainian) with the readings, the
 calibration line, time charts of the input current and an equilibrium timer for real
 electrodes. For measurements, a host script (`tools/calibrator_log.py`) polls the same data
-once per second and writes a CSV file; \1 The firmware and its web page keep the working name “pH Calibrator” (host name `calibrator.local`). The numbers reported below can be recomputed from the
+once per second and writes a CSV file. The firmware and its web page keep the working name “pH Calibrator” (host name `calibrator.local`). The numbers reported below can be recomputed from the
 CSV files with `analysis/paper_numbers.py`.
 
 The tester can help other researchers to:
