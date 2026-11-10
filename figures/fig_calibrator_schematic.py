@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Wiring diagram of the pH calibrator (tester): figures/fig_calibrator_schematic.png
+"""Wiring diagram of the pH calibrator (tester): figures/fig_calibrator_schematic.png and .pdf
 
 Everything is drawn from the coordinate lists below (units: pixels of a 2000 x 1209 canvas,
 y downwards). A dot is drawn where a wire is connected to another wire (T junction) or lands on a
@@ -23,10 +23,11 @@ INK = "#1a1a1a"
 LW = 3.6 * 0.576              # wire width in points (about 3.6 px at 125 dpi)
 HOP = 9
 
-fig = plt.figure(figsize=(20, H / 100.0), dpi=125)
+TOP = 58                      # no title on the figure (HardwareX: the title goes in the caption)
+fig = plt.figure(figsize=(20, (H - TOP) / 100.0), dpi=125)
 ax = fig.add_axes([0, 0, 1, 1])
 ax.set_xlim(0, W)
-ax.set_ylim(H, 0)
+ax.set_ylim(H, TOP)
 ax.axis("off")
 
 
@@ -157,11 +158,6 @@ def pad(x, y, r=8, dot=None):
     ax.add_patch(Circle((x, y), r * 0.55, fc=dot or "#8a7a55", ec="none", zorder=8))
 
 
-# title
-text(24, 22, "pH calibrator: wiring diagram", 28, weight="bold", ha="left")
-text(24, 54, "ESP32-C3 SuperMini, ADS1115, OLED and the pH electrode simulator. "
-     "Wire by the pin names printed on the boards.", 15.5, color="#333333", ha="left")
-
 # wire labels
 text(1139, 83, "5 V to the pH board (from the 5V pin)", 15, ORANGE, "bold")
 text(822, 113, "3.3 V", 15, RED, "bold")
@@ -172,7 +168,7 @@ text(503, 417, "SCL", 15, GREEN, "bold")
 text(881, 451, "A: simulator voltage, taken BEFORE the 50 MΩ resistor", 14, "#b58900", "bold")
 text(505, 1003, "reference: pot leg 1, BNC shield,", 14, PURPLE, "bold", ha="left")
 text(505, 1020, "input A1", 14, PURPLE, "bold", ha="left")
-text(1022, 792, "to BNC center", 14, "#0e7c8c", "bold", ha="left")
+text(955, 792, "to BNC center", 14, "#0e7c8c", "bold", ha="right")
 text(1140, 701, "S: up to 5 V, the ADS gets half", 12.5, "#c2336f", "bold", ha="left")
 text(1180, 666, "A3: board current (V on Rsh)", 13, "#555555", "bold", ha="left")
 text(1608, 763, "board GND", 12, "#555555", "bold", ha="left")
@@ -232,7 +228,7 @@ for x, lab in zip([594, 634, 674, 714], ["GND", "VCC", "SCL", "SDA"]):
 text(666, 372, "OLED SSD1306, address 0x3C", 14, weight="bold")
 
 # ADS1115
-ax.add_patch(FancyBboxPatch((1180, 230), 153, 403, boxstyle="round,pad=0,rounding_size=12", fc="#1f5aa6", ec="#133f7a", lw=2, zorder=4))
+ax.add_patch(FancyBboxPatch((1180, 230), 185, 403, boxstyle="round,pad=0,rounding_size=12", fc="#1f5aa6", ec="#133f7a", lw=2, zorder=4))
 for y, lab in zip([259, 293, 326, 360, 394, 428, 462, 495, 529, 563],
                   ["VDD", "GND", "SCL", "SDA", "ADDR", "ALRT", "A0", "A1", "A2", "A3"]):
     pad(1200, y, 9)
@@ -245,8 +241,7 @@ ax.add_patch(FancyBboxPatch((1267, 472), 36, 46, boxstyle="round,pad=0,rounding_
 for k in range(5):
     ax.plot([1260, 1267], [477 + k * 9] * 2, color="#cfd3d8", lw=2, zorder=5)
     ax.plot([1303, 1310], [477 + k * 9] * 2, color="#cfd3d8", lw=2, zorder=5)
-text(1323, 425, "ADS1115", 30, "#ffffff", "bold", rotation=270)
-text(1341, 394, "ADDR to GND", 14, weight="bold", ha="left")
+text(1336, 425, "ADS1115", 30, "#ffffff", "bold", rotation=270)
 
 # push button, trimmer, BNC, battery, switch
 text(834, 518, "push button", 14, weight="bold")
@@ -268,7 +263,7 @@ ax.add_patch(Circle((1036, 898), 6, fc="#e0a800", ec="#8a6a00", zorder=7))
 ax.add_patch(Rectangle((1058, 892), 14, 12, fc="#c8c8c8", ec="#888", zorder=5))
 ax.add_patch(Rectangle((998, 892), 14, 12, fc="#e0a800", ec="#8a6a00", zorder=5))
 text(1035, 837, "BNC female", 16, weight="bold")
-text(989, 920, "center", 12, "#8a6a00", "bold")
+text(952, 918, "center", 12, "#8a6a00", "bold", ha="right")
 text(1127, 880, "shield", 12, "#555555", "bold")
 text(172, 741, "LR44 battery, 1.5 V", 14, weight="bold")
 ax.add_patch(FancyBboxPatch((111, 753), 121, 89, boxstyle="round,pad=0,rounding_size=8", fc="#1c1c1c", ec="none", zorder=5))
@@ -310,7 +305,7 @@ KEY = [
     "Power the ADS1115 and OLED from 3.3 V.",
     "Feed S to the ADS only through R3 and R4.",
     "Board current: I = V(A3) / Rsh.",
-    "S in firmware: 2 × V(A2).",
+    "S in firmware: 2 × V(A2) − I · Rsh.",
     "A1 has no divider: A is valid only with a board.",
     "Cable to P2 is crossed: connect by function.",
     "Dot = connection. Arc = wires only cross.",
@@ -331,6 +326,17 @@ for n, (c, s) in enumerate(LEG2):
     ax.plot([251, 282], [1026 + n * 29] * 2, color=c, lw=LW, zorder=4)
     text(287, 1026 + n * 29, s, 11.5, ha="left")
 
+# test resistor Rt (dashed): only for the known-current checks, BNC center to shield
+DASH = "#555555"
+ax.plot([967, 967, 998], [898, 950, 950], color=DASH, lw=LW * 0.8, ls=(0, (4, 3)), zorder=9)
+ax.plot([1068, 1100], [950, 950], color=DASH, lw=LW * 0.8, ls=(0, (4, 3)), zorder=9)
+ax.add_patch(FancyBboxPatch((998, 939), 70, 22, boxstyle="round,pad=0,rounding_size=8",
+                            fc="#ffffff", ec=DASH, lw=1.4, ls="--", zorder=8))
+for x in (967, 1100):
+    ax.add_patch(Circle((x, 950 if x == 1100 else 898), 6, fc="#ffffff", ec=DASH, lw=1.4, zorder=12))
+text(1112, 943, "Rt 9.73 MΩ, test only", 12.5, DASH, "bold", ha="left")
+text(1112, 961, "(known currents, Section 7.3)", 11.5, DASH, ha="left")
+
 # wires and junction dots on top of everything else
 for i in range(len(wires)):
     draw_wire(i)
@@ -347,4 +353,7 @@ for (x, y), c in JUNCTIONS:
     ax.add_patch(Circle((x, y), 6.5, fc=c, ec="none", zorder=10))
 
 fig.savefig("figures/fig_calibrator_schematic.png", dpi=125, facecolor="white")
-print("wrote figures/fig_calibrator_schematic.png")
+# vector copy for the submission (HardwareX: line art as vector or at least 1000 dpi)
+with plt.rc_context({"pdf.fonttype": 42}):
+    fig.savefig("figures/fig_calibrator_schematic.pdf", facecolor="white")
+print("wrote figures/fig_calibrator_schematic.png, .pdf")

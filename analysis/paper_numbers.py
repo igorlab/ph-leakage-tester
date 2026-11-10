@@ -12,8 +12,10 @@ Sections:
   H  early failed board: current vs E, bound on a resistive leak
   B  noise run: logging resolution, Allan deviation, ten-minute drift
   A  known currents through Rt: deviation from expected, effective Rt/R
+  A2 known currents down to 18 pA, with the division of the node's own current
   G  PH-4502C: two sweeps in opposite directions, point at 0 mV
   F  electrode in buffers at 23 degC: slope, zero, residual
+  K  hourly KH of the titrator with the REF3040 board: night spread, outliers, daily range
   T  toggle runs at -99 and +100 mV (2026-10-28)
   N  one-hour runs shorted / in circuit, unattended transition (2026-10-28)
   U  uncertainty helpers: multimeter spec, E truncation in readA()
@@ -227,6 +229,29 @@ def section_f(data, temp_c=23.0):
     say()
 
 
+# ---------------------------------------------------------------- K
+def section_k(data):
+    say("== K. Hourly KH of the titrator (K_station_kh_history.csv) ==")
+    d = pd.read_csv(data / "K_station_kh_history.csv", parse_dates=["time"])
+    k = d.kh_dKH.to_numpy()
+    # single outliers: more than 0.2 dKH from the mean of both neighbours (as in fig_kh_history)
+    out = [i for i in range(1, len(k) - 1) if abs(k[i] - (k[i - 1] + k[i + 1]) / 2) > 0.2]
+    say(f"results: {len(k)}, {d.time.iloc[0]} to {d.time.iloc[-1]}; single outliers: {len(out)} "
+        f"({', '.join(str(d.time[i]) for i in out)})")
+    g = d.drop(index=out)
+    night = g[(g.time.dt.hour >= 1) & (g.time.dt.hour < 9)]     # 01:00-09:00, KH steady
+    rel = 100 * night.kh_dKH.std() / night.kh_dKH.mean()
+    say(f"01:00-09:00: n = {len(night)}, mean {night.kh_dKH.mean():.3f} dKH, "
+        f"SD {night.kh_dKH.std():.3f} dKH ({rel:.1f} %)")
+    days = g.groupby(g.time.dt.date)
+    full = [day for day, x in days if len(x) >= 23]
+    rng = [days.get_group(day).kh_dKH.max() - days.get_group(day).kh_dKH.min() for day in full]
+    tmin = [days.get_group(day).sort_values("kh_dKH").time.iloc[0].strftime("%H:%M") for day in full]
+    say(f"days with >= 23 results: {len(full)}; daily range {min(rng):.2f}-{max(rng):.2f} dKH; "
+        f"time of the daily minimum: {', '.join(tmin)}")
+    say()
+
+
 # ---------------------------------------------------------------- T, N (runs of 2026-10-28)
 def toggle_currents(d, lo, hi):
     """Per-cycle toggle and line-based currents (pA) from a log with marks short N / open N."""
@@ -261,6 +286,19 @@ def section_t(data):
         say("  toggle pA: " + ", ".join(f"{v:+.2f}" for v in cur))
         say(f"  mean {cur.mean():+.2f} pA, SEM {sem:.2f} pA; line-based mean {line.mean():+.2f} pA")
         say(f"  E open minus E shorted (button held by hand): mean {de.mean():+.1f} uV")
+        n = len(cur)
+        c = cur - cur.mean()
+        r1 = (c[:-1] * c[1:]).sum() / (c * c).sum()
+        tcrit = {7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228}.get(n - 1, 2.0)  # Student t, 97.5 %
+        rng = np.random.default_rng(1)
+        bl = 2
+        starts = np.arange(n - bl + 1)
+        boots = [np.concatenate([cur[s0:s0 + bl] for s0 in rng.choice(starts, int(np.ceil(n / bl)))])[:n].mean()
+                 for _ in range(20000)]
+        say(f"  lag-1 autocorrelation of the cycles {r1:+.2f}; 95 % CI (t, n-1) "
+            f"{cur.mean() - tcrit * sem:+.2f}..{cur.mean() + tcrit * sem:+.2f} pA; "
+            f"moving-block bootstrap (block {bl}) SE {np.std(boots):.2f} pA, 95 % "
+            f"{np.percentile(boots, 2.5):+.2f}..{np.percentile(boots, 97.5):+.2f} pA")
     say()
 
 
@@ -306,12 +344,44 @@ def section_u(r_mohm=R_TRUE):
     say()
 
 
+# ---------------------------------------------------------------- A2
+def section_a2(data, r_mohm=R_TRUE, rt_mohm=RT):
+    say("== A2. Known currents down to 18 pA (2026-11-08) ==")
+    beta = rt_mohm / (r_mohm + rt_mohm)
+    say(f"share of the node's own current through R: Rt/(R + Rt) = {beta:.3f}")
+    rows = []
+    for run in ("run7", "run9"):
+        d = pd.read_csv(data / f"A2_known_currents_2026-11-08_{run}.csv")
+        d = d[d.mark.notna()].reset_index(drop=True)
+        i_pa = (d.vin - d.e) / d.r * 1000.0
+        change = (d.mark != d.mark.shift()).cumsum()
+        phases = []
+        for _, g in d.groupby(change, sort=False):
+            mark = g.mark.iloc[0]
+            if mark == "on" or mark == "off" or (mark.startswith("e") and mark != "end"):
+                keep = g.t_s >= g.t_s.iloc[0] + 30
+                phases.append((mark, i_pa[g.index][keep].median(), g.e[keep].median()))
+        for k in range(1, len(phases) - 1):
+            if phases[k][0] == "on" and phases[k - 1][0].startswith("e") and phases[k + 1][0] == "off":
+                off = (phases[k - 1][1] + phases[k + 1][1]) / 2
+                e_mv = phases[k][2]
+                expected = -e_mv / (r_mohm + rt_mohm) * 1000.0
+                rows.append((run, e_mv, expected, phases[k][1] - beta * off, phases[k][1] - off))
+    say("  run   E mV   expected pA   measured pA (on - beta*off)   residual   residual, full difference")
+    for run, e_mv, expected, meas, full in rows:
+        say(f"  {run} {e_mv:+8.3f} {expected:+10.2f} {meas:+10.2f} {meas - expected:+8.2f} {full - expected:+8.2f}")
+    small = [r for r in rows if abs(r[1]) < 4]
+    res = np.array([r[3] - r[2] for r in small])
+    say(f"  |E| < 4 mV, n = {len(small)}: max |residual| {np.abs(res).max():.2f} pA, RMS {np.sqrt(np.mean(res ** 2)):.2f} pA")
+    say()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", type=Path,
                     default=Path(__file__).resolve().parent.parent / "data")
     args = ap.parse_args()
-    for f in (section_h, section_b, section_a, section_g, section_f, section_t, section_n):
+    for f in (section_h, section_b, section_a, section_a2, section_g, section_f, section_k, section_t, section_n):
         f(args.data)
     section_u()
     out = Path(__file__).resolve().parent / "paper_numbers.txt"

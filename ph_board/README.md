@@ -50,7 +50,7 @@ The original schematic, *Interface pH pour Arduino isolé* (KiCad, 20 Sep 2011),
 
 ## Contents
 
-- [`kicad/`](kicad/): KiCad 10 project.
+- [`kicad_manufactured/`](kicad_manufactured/): KiCad 10 project.
   - `ph_board.kicad_sch` is the schematic, `ph_board.kicad_pcb` the board.
   - `ph-board.kicad_sym` holds the symbols, `ph_single-easyedapro.pretty` the footprints.
   - `ph_board.kicad_dru` is the isolation rule: copper of the station side keeps 1.8 mm
@@ -65,7 +65,7 @@ The original schematic, *Interface pH pour Arduino isolé* (KiCad, 20 Sep 2011),
 ## How the files were checked
 
 - The board was laid out first; the schematic was drawn after it, from its connections.
-- `kicad/ph_board.kicad_pcb` is the file the boards were ordered from (2026-10-02): KiCad
+- `kicad_manufactured/ph_board.kicad_pcb` is the file the boards were ordered from (2026-10-02): KiCad
   regenerates the ordered copper, mask, paste and outline Gerbers from it without a
   single difference.
 - DRC reports 0 unconnected pads. Schematic parity reports 132 mismatches (footprint

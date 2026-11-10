@@ -492,11 +492,11 @@ static void drawScreen(float eMilliV, float vs, float vinMilliV, float leakNA) {
   // E and Vin
   oled.setFont(u8g2_font_8x13B_tr);
   oled.drawStr(0, noBoard ? 62 : 46, "E");
-  snprintf(buf, sizeof(buf), "%+.1f mV", eMilliV);
+  snprintf(buf, sizeof(buf), "%+.3f mV", eMilliV);
   rightText(127, noBoard ? 62 : 46, buf);
   if (!noBoard) {
     oled.drawStr(0, 62, "Vin");
-    if (haveLine) snprintf(buf, sizeof(buf), "%+.1f mV", vinMilliV);
+    if (haveLine) snprintf(buf, sizeof(buf), "%+.3f mV", vinMilliV);
     else          snprintf(buf, sizeof(buf), "---");
     rightText(127, 62, buf);
   }
@@ -1258,14 +1258,14 @@ function applyData(d){
     if(paused)return;        // пауза: ігноруємо пакет, графіки стоять
     lastD=d;
     const psv=d.pcv?d.pr:(d.valid?(7-d.vin/59.16):null);   // рН реальний: буферний або ідеал. Нернст
-    e.textContent=fmt(d.e,1); s.textContent=fmt(d.s,3);
+    e.textContent=fmt(d.e,3); s.textContent=fmt(d.s,3);
     sraw.textContent=fmt(d.s_raw,3); sdrop.textContent=fmt(d.shunt_drop,3);
     phA.textContent=fmt(d.ph,2); phS.textContent=(psv!=null)?psv.toFixed(2):'–';
     noise.textContent=fmt(d.noise,2);
     cur.textContent=fmt(d.i,2);
     {const u=document.getElementById('usb');if(u&&d.usb!=null)u.textContent=fmt(d.usb,3);}
     il.textContent=d.valid?fmtL(d.il):'–';
-    vin.textContent=d.valid?fmt(d.vin,1):'–';
+    vin.textContent=d.valid?fmt(d.vin,3):'–';
     document.getElementById('normlbl').textContent=fmtN(d.norm);
     const ov=document.getElementById('over');
     if(d.valid){
@@ -1273,8 +1273,8 @@ function applyData(d){
       if(k<=1){ov.textContent=T('over.ok');ov.style.color=COL.grn;}
       else{ov.textContent='×'+(k>=10?k.toFixed(0):k.toFixed(1))+T('over.over');ov.style.color=(Math.abs(d.il)>=1.0?COL.bad:COL.amb);}
     }else{ov.textContent='–';ov.style.color='';}
-    p1.textContent=d.h1?('E='+fmt(d.e1,1)+' '+T('u.mv')+', S='+fmt(d.s1,3)+' '+T('u.v')):'—';
-    p2.textContent=d.h2?('E='+fmt(d.e2,1)+' '+T('u.mv')+', S='+fmt(d.s2,3)+' '+T('u.v')):'—';
+    p1.textContent=d.h1?('E='+fmt(d.e1,3)+' '+T('u.mv')+', S='+fmt(d.s1,3)+' '+T('u.v')):'—';
+    p2.textContent=d.h2?('E='+fmt(d.e2,3)+' '+T('u.mv')+', S='+fmt(d.s2,3)+' '+T('u.v')):'—';
     gain.textContent=d.valid?fmt(d.gain,3):'—';
     zero.textContent=d.valid?fmt(d.zero,3):'—';
     gaint.textContent=d.valid?fmt(Math.abs(d.gain),2):'–';

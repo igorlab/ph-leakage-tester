@@ -43,6 +43,23 @@ e10 uses vin logged with 0.1 mV resolution on ~1.8 mV, so its ratio is imprecise
 the e100 ratio gives R independently of the multimeter value of R:
   R_eff = 49.70 MOhm
 
+== A2. Known currents down to 18 pA (2026-11-08) ==
+share of the node's own current through R: Rt/(R + Rt) = 0.164
+  run   E mV   expected pA   measured pA (on - beta*off)   residual   residual, full difference
+  run7   -3.006     +50.66     +50.16    -0.50    +2.74
+  run7   -1.061     +17.88     +17.61    -0.27    +3.00
+  run7   +1.053     -17.75     -17.91    -0.17    -0.86
+  run7   +3.066     -51.67     -51.86    -0.19    -0.41
+  run7  +10.056    -169.46    -169.37    +0.09    +0.46
+  run7  +29.853    -503.08    -502.36    +0.72    +1.12
+  run7  +99.953   -1684.41   -1681.19    +3.22    +3.94
+  run9   -3.163     +53.30     +53.09    -0.21    +2.98
+  run9   -1.051     +17.71     +17.67    -0.04    +2.99
+  run9   -1.051     +17.71     +17.70    -0.01    +2.88
+  run9   +3.056     -51.50     -51.36    +0.14    -0.76
+  run9   +1.088     -18.34     -18.44    -0.11    +0.25
+  |E| < 4 mV, n = 9: max |residual| 0.50 pA, RMS 0.23 pA
+
 == G. PH-4502C (G_ph4502c.csv) ==
 plateaus: E steps > 2 mV, or the button press at t = 898 s, start a new plateau;
 plateaus with < 8 readings dropped; plateaus from t >= 898 s are the shorted sweep
@@ -83,16 +100,23 @@ solution temperature: 23.0 degC; window: 300 s before the first '_end' row
 slope: -55.60 mV/pH, ideal at 23.0 degC: 58.76 mV/pH (94.6 %)
 pH at 0 mV: 6.857; largest residual: 0.38 mV
 
+== K. Hourly KH of the titrator (K_station_kh_history.csv) ==
+results: 208, 2026-10-10 13:10:00 to 2026-10-19 10:10:00; single outliers: 3 (2026-10-10 22:10:00, 2026-10-11 21:10:00, 2026-10-12 12:11:00)
+01:00-09:00: n = 72, mean 8.022 dKH, SD 0.031 dKH (0.4 %)
+days with >= 23 results: 7; daily range 0.25-0.54 dKH; time of the daily minimum: 19:09, 18:10, 19:10, 21:09, 20:09, 23:10, 19:10
+
 == T. Toggle runs on the REF3040 board (2026-10-28) ==
 window: lo..hi s after each switch; current = [(vin-e)_open - mean (vin-e)_shorted neighbours] / R_TRUE
 T_toggle_REF3040_2026-10-28.csv: E -98.7 mV, window 30-60 s
   toggle pA: -2.60, -2.85, -3.25, -3.58, -3.43, -3.31, -3.41, -3.04
   mean -3.18 pA, SEM 0.12 pA; line-based mean -3.27 pA
   E open minus E shorted (button held by hand): mean -8.1 uV
+  lag-1 autocorrelation of the cycles +0.43; 95 % CI (t, n-1) -3.46..-2.91 pA; moving-block bootstrap (block 2) SE 0.12 pA, 95 % -3.43..-2.97 pA
 T_toggle_+100_REF3040_2026-10-28.csv: E 99.3 mV, window 10-30 s
   toggle pA: -0.95, -1.07, -1.26, -1.04, -1.37, -1.41, -1.16, -0.89
   mean -1.14 pA, SEM 0.07 pA; line-based mean -1.12 pA
   E open minus E shorted (button held by hand): mean -31.0 uV
+  lag-1 autocorrelation of the cycles +0.12; 95 % CI (t, n-1) -1.30..-0.99 pA; moving-block bootstrap (block 2) SE 0.06 pA, 95 % -1.30..-1.06 pA
 
 == N. One-hour runs at E = +100 mV, resistor shorted (B3) and in circuit (B2) ==
 B3_noise_shorted_2026-10-28.csv: 3601 readings, mean +0.261 pA, SD 0.310 pA

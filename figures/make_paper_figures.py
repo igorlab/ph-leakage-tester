@@ -99,8 +99,8 @@ def fig_known():
     b.set_yscale("log")
     b.set_xlim(lo, hi)
     b.set_ylim(lo, hi)
-    b.set_xlabel("Expected current, pA")
-    b.set_ylabel("Measured current, pA")
+    b.set_xlabel("Expected current magnitude |I|, pA")
+    b.set_ylabel("Measured current magnitude |I|, pA")
     b.set_title("(b) Measured against expected", fontsize=8.5, loc="left")
     fig.tight_layout()
     for ext in ("png", "pdf"):
@@ -209,8 +209,7 @@ def fig_kh():
     a.xaxis.set_major_locator(mdates.DayLocator())
     a.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     a.set_ylabel("KH, dKH")
-    a.set_title("Hourly KH of a reef aquarium, 10-19 Oct 2026 (shaded: 01:00-09:00)",
-                fontsize=8.5, loc="left")
+    # title in the caption, not on the figure (HardwareX Guide for authors)
     a.legend(fontsize=7, frameon=False, loc="lower right", ncol=3)
     fig.tight_layout()
     for ext in ("png", "pdf"):
@@ -262,7 +261,8 @@ def fig_ph4502c():
         if abs(m[0] - e) < 15:
             leak.append((e, (i_rel - m[1]) * K, sem * K))
 
-    fig, (a, b) = plt.subplots(1, 2, figsize=(7.2, 2.8))
+    fig = plt.figure(figsize=(7.2, 5.4))
+    a, b, c = fig.add_subplot(2, 2, 1), fig.add_subplot(2, 2, 2), fig.add_subplot(2, 1, 2)
     a.axhline(0, color=GREY, lw=0.6)
     a.plot(nl_e, nl_mv, "o-", color=BLUE, ms=4, lw=0.9, label="PH-4502C")
     # the 0 mV point of the sweep with the resistor in circuit disagrees with the shorted one
@@ -286,6 +286,31 @@ def fig_ph4502c():
     b.set_xlabel("Input E, mV")
     b.set_ylabel("Input current, pA")
     b.set_title("(b) PH-4502C input current (±2 SEM)", fontsize=8.5, loc="left")
+
+    # protocol I: an AA cell through 100 kOhm between the buffer and supply ground, both polarities
+    iso = rows("I_isolation_PH4502C_merged.csv")
+    iso = iso[[i for i in range(1, len(iso)) if float(iso[i]["t_s"]) < float(iso[i - 1]["t_s"])][0]:]
+    for rs, label, col in ((iso, "PH-4502C", BLUE), (rows("I_isolation_board.csv"), "isolated amplifier", GREEN)):
+        t = [float(x["t_s"]) / 60 for x in rs]
+        c.plot(t, [float(x["vin"]) for x in rs], color=col, lw=1.1, label=label)
+        # phases marked as cell connected, shaded in the colour of each (separate) run
+        dev = "PH4502C" if col == BLUE else "board"
+        for j, pol in enumerate(("plus", "minus")):
+            m = [i for i, x in enumerate(rs) if x["mark"] == f"I_{dev}_{pol}_start"]
+            e = [i for i, x in enumerate(rs) if x["mark"] == f"I_{dev}_{pol}_end"]
+            c.axvspan(t[m[0]], t[e[0]], color=col, alpha=0.12, lw=0,
+                      label=f"cell on, {label} run" if j == 0 else None)
+            if col == GREEN:
+                c.text((t[m[0]] + t[e[0]]) / 2, 205, "isolated\namplifier:\ncell on", ha="center", va="top",
+                       fontsize=6.5, color=DARK)
+    c.axhline(0, color=GREY, lw=0.6, ls=":")
+    c.set_ylim(-80, 220)                         # a −0.8 V spike while the cell is connected leaves the frame
+    c.set_xlim(0, 16)
+    c.set_xlabel("Time, min")
+    c.set_ylabel("Indicated input, mV")
+    c.set_title("(c) Isolation: AA cell through 100 kΩ from the buffer to supply ground", fontsize=8.5,
+                loc="left")
+    c.legend(fontsize=7.5, frameon=False, loc="upper right")
     fig.tight_layout()
     for ext in ("png", "pdf"):
         fig.savefig(os.path.join(HERE, f"fig_ph4502c.{ext}"))
@@ -309,10 +334,10 @@ def fig_leak_error():
     for y in (0.01, 1):
         a.axhline(y, color=GREY, lw=0.6, ls=":")
         a.text(1.15e-13, y * 1.15, f"{y:g} pH", fontsize=7.5, color=GREY)
-    a.axvspan(8e-9, 13e-9, color=BLUE, alpha=0.25, lw=0)
-    a.text(7e-9, 0.04, "Failed amplifier\n8–13 nA", fontsize=8, color=BLUE, ha="right", fontweight="bold")
-    a.axvspan(1e-12, 3.5e-12, color=GREEN, alpha=0.3, lw=0)   # toggle runs at -99 and +100 mV
-    a.text(4.2e-12, 3, "Isolated amplifier\n1–3.5 pA", fontsize=8, color=GREEN, fontweight="bold")
+    a.axvline(12e-9, color=BLUE, lw=1.5)          # protocol H: 12.01 nA, preliminary (Section 7.6)
+    a.text(10e-9, 0.04, "Failed amplifier\nabout 12 nA", fontsize=8, color=BLUE, ha="right", fontweight="bold")
+    a.axvspan(0.47e-12, 4.6e-12, color=GREEN, alpha=0.3, lw=0)  # toggle runs at ±100 mV, 28 Oct and 9 Nov (|I|)
+    a.text(5.8e-12, 3, "Isolated amplifier\nindication 0.5–4.6 pA", fontsize=8, color=GREEN, fontweight="bold")
     a.set_xscale("log"); a.set_yscale("log")
     a.set_xlim(1e-13, 1e-7); a.set_ylim(1e-3, 1e2)
     a.set_xticks([1e-13, 1e-12, 1e-11, 1e-10, 1e-9, 1e-8, 1e-7])
@@ -327,47 +352,74 @@ def fig_leak_error():
         fig.savefig(os.path.join(HERE, f"fig_leak_error.{ext}"))
     plt.close(fig)
 
-def fig_supply_sensitivity():
-    """Revision A divider against revision B REF3040, with the 10 ohm shunt removed."""
+# Plateaus of the USB supply in A_REF3040_supply.csv (t_s windows, settling after each change skipped)
+SUPPLY_A_WINDOWS = [(5, 280), (292, 360), (370, 426), (437, 486), (496, 570), (580, 625)]
+SHUNT_OHM = 10.0
+GAIN_A = -6.0867                       # V/V, board A with REF3040 (Linearity, shunt corrected)
+
+
+def fit_se(x, y):
+    """Least-squares slope, its standard error and the intercept."""
     import numpy as np
-    raw = rows("E_supply2.csv")
-    groups = {"Earlier divider prototype": [], "REF3040 reference": []}
-    for x in raw:
+    x, y = np.asarray(x, float), np.asarray(y, float)
+    k, z = np.polyfit(x, y, 1)
+    resid = y - (k * x + z)
+    se = (resid @ resid / (len(x) - 2) / ((x - x.mean()) @ (x - x.mean()))) ** 0.5
+    return k, se, z
+
+
+def supply_divider():
+    """Earlier divider prototype (board A before the rework): marked points of E_supply2.csv."""
+    by_v = {}
+    for x in rows("E_supply2.csv"):
         if x["kind"] != "mark":
             continue
         try:
-            usb = float(x["volt"])
-            current = float(x["i"])
-            out = float(x["s_noshunt"])
+            usb, current, out = float(x["volt"]), float(x["i"]), float(x["s_noshunt"])
         except ValueError:
             continue
-        name = "REF3040 reference" if current > 20 else "Earlier divider prototype"
-        groups[name].append((usb, out))
+        if current < 20:                   # the second REF3040 board draws 27-31 mA
+            by_v.setdefault(usb, []).append(out)
+    v = sorted(by_v)
+    return v, [st.mean(by_v[u]) for u in v]
+
+
+def supply_ref3040():
+    """Board A with REF3040: plateau means, shunt drop removed, normalised to the mean E.
+
+    This log predates the firmware with the shunt correction, so s includes the drop
+    i x 10 ohm; S is logged with 1 mV resolution."""
+    r = rows("A_REF3040_supply.csv")
+    pts = []
+    for lo, hi in SUPPLY_A_WINDOWS:
+        seg = [x for x in r if lo <= float(x["t_s"]) <= hi]
+        pts.append(tuple(st.mean(float(x[c]) for x in seg) for c in ("usb", "e", "s", "i")))
+    e0 = st.mean(p[1] for p in pts)
+    v = [p[0] for p in pts]
+    s = [p[2] - p[3] * 1e-3 * SHUNT_OHM - GAIN_A * (p[1] - e0) * 1e-3 for p in pts]
+    return v, s
+
+
+def fig_supply_sensitivity():
+    """Board A with REF3040 against the earlier divider prototype, with the 10 ohm shunt removed."""
+    import numpy as np
+    sets = [("REF3040 reference", *supply_ref3040(), GREEN, "s", abs(GAIN_A)),
+            ("Earlier divider prototype", *supply_divider(), BLUE, "o", 6.27)]
 
     fig, ax = plt.subplots(figsize=(4.6, 3.2))
-    styles = {
-        "Earlier divider prototype": (BLUE, "o"),
-        "REF3040 reference": (GREEN, "s"),
-    }
-    for name, pts in groups.items():
-        # Duplicate marked points at the same setting are averaged, preserving raw CSV unchanged.
-        by_v = {}
-        for v, s in pts:
-            by_v.setdefault(v, []).append(s)
-        x = np.array(sorted(by_v))
-        y = np.array([st.mean(by_v[v]) for v in x])
-        k, z = np.polyfit(x, y, 1)
-        color, marker = styles[name]
-        ax.plot(x, y, marker, color=color, ms=5, label=name)
-        xx = np.linspace(x.min(), x.max(), 100)
-        gain = 6.087 if name == "REF3040 reference" else 6.27
+    for name, v, s, color, marker, gain in sets:
+        k, se, z = fit_se(v, s)
+        ref = k * 5.0 + z                  # change of S from its fitted value at 5.0 V
         ph_per_v = abs(k) / gain / 0.05916
-        ax.plot(xx, k * xx + z, color=color, lw=1.2,
-                label=f"fit: {k*1000:.1f} mV/V = {ph_per_v:.3f} pH/V")
-        print(name, f"slope {k*1000:.3f} mV/V, {ph_per_v:.4f} pH/V")
+        ax.plot(v, [(y - ref) * 1e3 for y in s], marker, color=color, ms=5, label=name)
+        xx = np.linspace(min(v), max(v), 100)
+        ax.plot(xx, (k * xx + z - ref) * 1e3, color=color, lw=1.2,
+                label=f"fit: {k*1000:.1f} ± {se*1000:.1f} mV/V = {ph_per_v:.2g} pH/V")
+        print(name, f"{min(v):.2f}-{max(v):.2f} V, slope {k*1000:.3f} +- {se*1000:.3f} mV/V,"
+              f" {ph_per_v:.5f} pH/V")
 
     ax.set_xlabel("USB supply, V")
-    ax.set_ylabel("Board output S, V (10 Ω shunt removed)")
+    ax.set_ylabel("Change of output S, mV (10 Ω shunt removed)")
     ax.set_title("Supply sensitivity of the isolated amplifier",
                  fontsize=9, loc="left")
     ax.legend(fontsize=6.8, frameon=False, loc="upper left")
@@ -424,7 +476,7 @@ def fig_toggle():
     a.set_ylim(-6, 2.5)                    # spikes while the button is handled leave the frame
     a.set_xlabel("Time, min")
     a.set_ylabel("(Vin − E) / R, pA")
-    a.set_title("(a) E = −99 mV; shorted phases grey", fontsize=8.5, loc="left")
+    a.set_title("(a) E = −99 mV; shorted phases gray", fontsize=8.5, loc="left")
     for name, lo, hi, label, col in runs:
         _, _, _, cur, line = toggle_phases(name, lo, hi)
         n = np.arange(1, len(cur) + 1)
@@ -445,8 +497,79 @@ def fig_toggle():
         fig.savefig(os.path.join(HERE, f"fig_toggle.{ext}"))
     plt.close(fig)
 
+def allan(y, m):
+    """Non-overlapping Allan deviation for blocks of m consecutive readings (as paper_numbers.py)."""
+    import numpy as np
+    n = len(y) // m
+    blocks = y[: n * m].reshape(n, m).mean(axis=1)
+    return np.sqrt(0.5 * np.mean(np.diff(blocks) ** 2)), n
+
+
+def fig_allan():
+    """One-hour runs at E = +100 mV: resistor shorted (B3) and in circuit (B2)."""
+    import numpy as np
+    runs = [("B3_noise_shorted_2026-10-28.csv", "R shorted", BLUE),
+            ("B2_noise_open_2026-10-28.csv", "R in circuit", GREEN)]
+    taus = [1, 2, 3, 5, 10, 20, 30, 60, 120, 180, 300, 450, 600]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(7.2, 3.0), gridspec_kw={"width_ratios": [1.4, 1]})
+    for name, label, col in runs:
+        r = [x for x in rows(name) if x["valid"] == "1"]
+        y = np.array([float(x["il"]) for x in r]) * 1000 * firmware_r(r) / R_SERIES   # pA
+        t = (np.array([float(x["t_s"]) for x in r]) - float(r[0]["t_s"])) / 60
+        a.plot(t, y, ".", color=col, ms=1, alpha=0.15, rasterized=True)
+        ten = [y[i * 600:(i + 1) * 600].mean() for i in range(len(y) // 600)]   # as paper_numbers.py
+        for i, v in enumerate(ten):
+            a.plot([10 * i, 10 * (i + 1)], [v, v], color=col, lw=2, label=label if i == 0 else None)
+            if col == BLUE:                      # the drift quoted in the text: first and largest mean
+                if i == 0 or v == max(ten):
+                    a.annotate(f"{v:+.2f}", (10 * i + 5, v), xytext=(0, 5), textcoords="offset points",
+                               ha="center", fontsize=7.5, color=DARK)
+        ad = [allan(y, k) for k in taus]
+        s = np.array([v for v, _ in ad])
+        few = np.array([k for _, k in ad]) < 10          # fewer than ten blocks in the hour
+        b.plot(taus, s, "-", color=col, lw=1.4, label=label)
+        b.plot(np.array(taus)[~few], s[~few], "o", color=col, ms=4.5)
+        b.plot(np.array(taus)[few], s[few], "o", mfc="white", mec=col, ms=4.5)
+        b.plot(taus, s[0] / np.sqrt(taus), "--", color=col, lw=0.7, alpha=0.7)
+        at_1min = (-2, 11, "right") if col == GREEN else (5, -11, "left")
+        for k, (dx, dy, ha) in ((1, (5, 6, "left")), (60, at_1min)):   # the values quoted in the text
+            v = s[taus.index(k)]
+            b.annotate(f"{v:.2f}", (k, v), xytext=(dx, dy), textcoords="offset points", ha=ha,
+                       fontsize=7.5, color=DARK)
+        print(label, ", ".join(f"{k} s {v:.3f}" for k, v in zip(taus, s)),
+              "| ten-minute means", ", ".join(f"{v:+.2f}" for v in ten))
+    a.axhline(0, color=GREY, lw=0.6, ls=":")
+    a.set_xlim(0, 60)
+    a.set_xticks(range(0, 61, 10))
+    a.set_ylim(-4, 2.5)
+    a.set_xlabel("Time, min")
+    a.set_ylabel("Indicated current, pA")
+    a.set_title("(a) Readings (dots) and ten-minute means", fontsize=8.5, loc="left")
+    a.legend(loc="lower left", fontsize=7.5, frameon=False)
+    for k in (1, 60):
+        b.axvline(k, color=GREY, lw=0.6, ls=":")
+    b.axvspan(300, 600, color=GREY, alpha=0.12, lw=0)
+    b.text(420, 0.125, "0.08–0.10", ha="center", fontsize=7.5, color=DARK)
+    b.set_xscale("log")
+    b.set_yscale("log")
+    b.set_xticks([1, 10, 60, 600])
+    b.set_xticklabels(["1 s", "10 s", "1 min", "10 min"])
+    b.set_yticks([0.05, 0.1, 0.2, 0.5])
+    b.set_yticklabels(["0.05", "0.1", "0.2", "0.5"])
+    b.minorticks_off()
+    b.set_ylim(0.03, 0.7)
+    b.set_xlabel("Averaging time τ")
+    b.set_ylabel("Allan deviation, pA")
+    b.set_title("(b) Allan deviation; dashed: 1/√τ", fontsize=8.5, loc="left")
+    fig.tight_layout()
+    for ext in ("png", "pdf"):
+        fig.savefig(os.path.join(HERE, f"fig_allan.{ext}"))
+    plt.close(fig)
+
+
 FIGS = {"leak": fig_leak_error, "known": fig_known, "linearity": fig_linearity,
-        "supply": fig_supply_sensitivity, "kh": fig_kh, "ph4502c": fig_ph4502c, "toggle": fig_toggle}
+        "supply": fig_supply_sensitivity, "kh": fig_kh, "ph4502c": fig_ph4502c, "toggle": fig_toggle,
+        "allan": fig_allan}
 if __name__ == "__main__":
     for name in sys.argv[1:] or FIGS:
         FIGS[name]()
